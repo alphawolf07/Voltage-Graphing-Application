@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Working with APIs</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <h1 style="text-align: center;">Voltage Demo(X:Voltages,Y:Values)</h1>
+    <div style="height: 50%; width: 50%; align-items: center; justify-content: center;">
+    <canvas id="chart" height="800" width="800"></canvas>
+    <script>
+        const xlabels=[];
+        const ytemps=[];
+        const xlabels1=[];
+        const ytemps1=[];
+        const xlabels2=[];
+        const ytemps2=[];
+       chartit();
+       async function chartit(){
+           await getData();
+       const ctx = document.getElementById('chart').getContext('2d');
+       
+       const myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: [5,6,7,8],
+        datasets: [{
+            label:'Voltage measure R',
+            data: ytemps,
+            fill:false,
+            lineTension: 0,
+            backgroundColor: 
+                'rgba(255, 99, 132, 0.2)'
+                
+            ,
+            borderColor: 
+                'rgba(255, 99, 132, 1)'
+
+            ,
+            borderWidth: 1
+        },
+        {
+            label: 'Voltage measure Y',
+            data: ytemps1,
+            fill:false,
+            lineTension: 0,
+            backgroundColor: 
+                'rgba(00, 170, 100, 0.2)'
+                
+            ,
+            borderColor: 
+                'rgba(00, 170, 100, 1)'
+
+            ,
+            borderWidth: 1
+        },
+        {
+            label: 'Voltage measure B',
+            data: ytemps2,
+            fill:false,
+            lineTension: 0,
+            backgroundColor: 
+                'rgba(90, 00, 100, 0.2)'
+                
+            ,
+            borderColor: 
+                'rgba(90, 000, 100, 1)'
+
+            ,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+}
+       async function getData(){
+          
+            const response= await fetch('Voltageexp.csv');
+            const data=await response.text();
+            console.log(data);
+            const table =data.split('\n').slice(1);
+            table.forEach(row=>{
+                const columns=row.split(',');
+                const year=columns[0];
+                xlabels.push(year);
+                const temp=columns[1];
+                ytemps.push(parseFloat(temp));
+                console.log(year,temp);
+            })
+            const response1= await fetch('Voltageexp2.csv');
+            const data1=await response1.text();
+            console.log(data1);
+            const table1 =data1.split('\n').slice(1);
+            table1.forEach(row=>{
+                const columns=row.split(',');
+                const year=columns[0];
+                xlabels1.push(year);
+                const temp=columns[1];
+                ytemps1.push(parseFloat(temp));
+                console.log(year,temp);
+            })
+            const response2= await fetch('Voltageexp3.csv');
+            const data2=await response2.text();
+            console.log(data2);
+            const table2 =data2.split('\n').slice(1);
+            table2.forEach(row=>{
+                const columns=row.split(',');
+                const year=columns[0];
+                xlabels2.push(year);
+                const temp=columns[1];
+                ytemps2.push(parseFloat(temp));
+                console.log(year,temp);
+            })
+}
+
+//Data is loaded manually from the Voltagetotal.csv file for the pdf download part!!
+
+var csvFileData = [  
+   ['Voltage', 'ValueR','ValueY','ValueB'],  
+   ['5', '10','11','6'],  
+   ['6', '13','15','15'],  
+   ['7', '14','13','7'],  
+   ['8', '15.5','18','12']  
+]; 
+function download_csv_file() {  
+  
+  //define the heading for each row of the data  
+  var csv = 'Name,Profession\n';  
+    
+  //merge the data with CSV  
+  csvFileData.forEach(function(row) {  
+          csv += row.join(',');  
+          csv += "\n";  
+  });  
+ 
+  //display the created CSV data on the web browser   
+  document.write(csv);  
+
+   
+  var hiddenElement = document.createElement('a');  
+  hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);  
+  hiddenElement.target = '_blank';  
+    
+  //provide the name for the CSV file to be downloaded  
+  hiddenElement.download = 'Voltageexp.csv';  
+  hiddenElement.click();  
+}  
+
+    </script>
+    
+    </div>
+
+    <div class="container">
+        <div class="table-responsive">
+         <h1 align="center">CSV File to HTML Table Using AJAX jQuery</h1>
+         <br />
+         <div id="employee_table">
+         </div>
+        </div>
+       </div>
+       <br>
+       <div style="align-items: center; justify-content: center; text-align: center;">
+        <button onclick="download_csv_file()">Download file!</button>
+        <br>
+        <br>
+       </div>
+</body>
+<script>
+    $.ajax({
+   url:"Voltagetotal.csv",
+   dataType:"text",
+   success:function(data)
+   {
+    var employee_data = data.split(/\r?\n|\r/);
+    var table_data = '<table class="table table-bordered table-striped">';
+    for(var count = 0; count<employee_data.length; count++)
+    {
+     var cell_data = employee_data[count].split(",");
+     table_data += '<tr>';
+     for(var cell_count=0; cell_count<cell_data.length; cell_count++)
+     {
+      if(count === 0)
+      {
+       table_data += '<th>'+cell_data[cell_count]+'</th>';
+      }
+      else
+      {
+       table_data += '<td>'+cell_data[cell_count]+'</td>';
+      }
+     }
+     table_data += '</tr>';
+    }
+    table_data += '</table>';
+    $('#employee_table').html(table_data);
+   }
+  });
+</script>
+</html>
